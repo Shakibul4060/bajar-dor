@@ -10,20 +10,14 @@ import { Product } from "@/lib/types";
 function getTopRisers(products: Product[]) {
   return [...products]
     .filter((product) => product.changePercent > 0)
-    .sort(
-      (a, b) =>
-        b.changePercent - a.changePercent
-    )
+    .sort((a, b) => b.changePercent - a.changePercent)
     .slice(0, 6);
 }
 
 function getTopFallers(products: Product[]) {
   return [...products]
     .filter((product) => product.changePercent < 0)
-    .sort(
-      (a, b) =>
-        a.changePercent - b.changePercent
-    )
+    .sort((a, b) => a.changePercent - b.changePercent)
     .slice(0, 6);
 }
 
@@ -49,8 +43,8 @@ export default async function HomePage() {
         <Hero />
 
         <ProductSection
-          title="আজ দাম বেড়েছে ▲"
-          subtitle="আজ যেসব পণ্যের দাম সবচেয়ে বেশি বেড়েছে"
+          title="আজ দাম বেড়েছে ▲"
+          subtitle="আজ যেসব পণ্যের দাম সবচেয়ে বেশি বেড়েছে"
           products={risers}
         />
 
@@ -63,7 +57,7 @@ export default async function HomePage() {
         </div>
 
         <section
-          id="সব-পণ্য"
+          id="all-products"
           className="section-padding scroll-mt-32"
         >
           <div className="container-main">
@@ -73,7 +67,7 @@ export default async function HomePage() {
                   সব পণ্য
                 </h2>
 
-                <p className="mt-2 text-sm text-[#778077]">
+                <p className="mt-2 text-sm leading-6 text-[#778077]">
                   প্রয়োজনীয় সব পণ্যের আজকের বাজারদর দেখুন।
                 </p>
               </div>
@@ -85,14 +79,16 @@ export default async function HomePage() {
 
             {products.length === 0 ? (
               <div className="rounded-2xl border border-[#e1e8e1] bg-white px-5 py-14 text-center">
-                <div className="text-5xl">🛒</div>
+                <div className="text-5xl" aria-hidden="true">
+                  🛒
+                </div>
 
                 <h3 className="mt-4 text-lg font-black text-[#263026]">
                   পণ্যের তথ্য পাওয়া যায়নি
                 </h3>
 
-                <p className="mt-2 text-sm text-[#7c847c]">
-                  কিছুক্ষণ পরে আবার চেষ্টা করুন।
+                <p className="mt-2 text-sm leading-6 text-[#7c847c]">
+                  কিছুক্ষণ পর আবার চেষ্টা করুন।
                 </p>
               </div>
             ) : (
