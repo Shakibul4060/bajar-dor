@@ -1,71 +1,65 @@
 import Link from "next/link";
-import { ArrowDown, ArrowUp, Minus } from "lucide-react";
-import { Product } from "@/lib/types";
+import { ArrowDown, ArrowUp, Minus, ArrowUpRight } from "lucide-react";
+import type { Product } from "@/lib/types";
 import { formatPercent, formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
 }
 
-export default function ProductCard({
-  product,
-}: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
   const isUp = product.changeType === "up";
   const isDown = product.changeType === "down";
+
+  const changeStyle = isUp
+    ? "bg-emerald-50 text-emerald-700 ring-emerald-100"
+    : isDown
+      ? "bg-rose-50 text-rose-700 ring-rose-100"
+      : "bg-gray-100 text-gray-600 ring-gray-200";
 
   return (
     <Link
       href={`/product/${product.slug}`}
-      className="group block"
+      className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168a45] focus-visible:ring-offset-2"
+      aria-label={`${product.name}, দাম ${formatPrice(product.price)}`}
     >
-      <article className="h-full rounded-2xl border border-[#e0e8e0] bg-white p-4 transition duration-200 hover:-translate-y-1 hover:border-[#b9dabe] hover:shadow-lg hover:shadow-[#17301e]/7">
-        {/* Product image */}
-        <div className="flex h-36.25 items-center justify-center rounded-xl bg-[#f6f9f6] transition group-hover:bg-[#eef8f0]">
+      <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#e3eae3] bg-white p-3 transition-all duration-300 hover:-translate-y-1 hover:border-[#b7d9be] hover:shadow-xl hover:shadow-[#17301e]/10 sm:p-4">
+        <div className="relative flex h-32 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-[#f6faf6] to-[#edf6ee] sm:h-40">
           <span
-            className="text-7xl transition duration-200 group-hover:scale-110"
+            className="text-6xl transition-transform duration-300 group-hover:scale-110 sm:text-7xl"
             aria-hidden="true"
           >
             {product.emoji}
           </span>
+
+          <span className="absolute right-2 top-2 rounded-full border border-white/80 bg-white/90 px-2 py-1 text-[10px] font-semibold text-[#526252] shadow-sm">
+            {product.category}
+          </span>
+
+          <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-1 text-[10px] font-medium text-[#687568]">
+            {product.unit}
+          </span>
         </div>
 
-        {/* Content */}
-        <div className="pt-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h3 className="line-clamp-1 text-base font-extrabold text-[#202a20]">
-                {product.name}
-              </h3>
+        <div className="flex flex-1 flex-col pt-3 sm:pt-4">
+          <h3 className="line-clamp-1 text-sm font-extrabold text-[#202a20] transition-colors group-hover:text-[#168a45] sm:text-base">
+            {product.name}
+          </h3>
 
-              <p className="mt-1 text-xs font-medium text-[#7c857c]">
-                {product.unit}
-              </p>
-            </div>
-
-            <span className="shrink-0 rounded-lg bg-[#f1f6f1] px-2 py-1 text-[10px] font-bold text-[#687268]">
-              {product.category}
-            </span>
-          </div>
-
-          <div className="mt-5 flex items-end justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-medium text-[#879087]">
+          <div className="mt-auto flex items-end justify-between gap-2 pt-4">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium text-[#879087] sm:text-xs">
                 আজকের দাম
               </p>
 
-              <p className="mt-1 text-lg font-black text-[#168a45]">
+              <p className="mt-1 break-words text-base font-black text-[#168a45] sm:text-xl">
                 {formatPrice(product.price)}
               </p>
             </div>
 
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                isUp
-                  ? "bg-[#e6f7ec] text-[#168a45]"
-                  : isDown
-                    ? "bg-[#fff0f0] text-[#dc4d4d]"
-                    : "bg-[#f0f2f0] text-[#7b827b]"
-              }`}
+              className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold ring-1 ring-inset sm:text-xs ${changeStyle}`}
+              title={`দামের পরিবর্তন ${formatPercent(product.changePercent)}%`}
             >
               {isUp ? (
                 <ArrowUp size={12} />
@@ -77,6 +71,14 @@ export default function ProductCard({
 
               {formatPercent(product.changePercent)}%
             </span>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between border-t border-[#edf1ed] pt-3 text-xs font-semibold text-[#748074] transition-colors group-hover:text-[#168a45]">
+            <span>বিস্তারিত দেখুন</span>
+            <ArrowUpRight
+              size={15}
+              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
           </div>
         </div>
       </article>
