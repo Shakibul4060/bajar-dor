@@ -1,5 +1,7 @@
+
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Settings2 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import ProfileForm from "@/components/profileform";
 
@@ -8,28 +10,35 @@ export default async function UpdateProfilePage() {
     headers: await headers(),
   });
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/signin?callbackURL=%2Fprofile%2Fupdate");
   }
 
   return (
-    <main className="mx-auto min-h-[70vh] max-w-2xl px-4 py-12">
-      <div className="rounded-3xl border border-base-300 bg-base-100 p-6 shadow-sm sm:p-8">
-        <p className="mb-2 text-sm font-semibold text-primary">
-          BazarDor অ্যাকাউন্ট
-        </p>
+    <main className="min-h-screen bg-[#f7f8f4] px-4 py-10 sm:py-16">
+      <div className="mx-auto max-w-2xl">
+        <div className="mb-7 flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e8f6ec] text-[#168a45]">
+            <Settings2 size={27} />
+          </div>
 
-        <h1 className="text-3xl font-bold">
-          প্রোফাইল আপডেট
-        </h1>
+          <div>
+            <p className="text-sm font-bold text-[#168a45]">
+              অ্যাকাউন্ট সেটিংস
+            </p>
+            <h1 className="mt-1 text-3xl font-black text-[#1b291d]">
+              প্রোফাইল আপডেট
+            </h1>
+          </div>
+        </div>
 
-        <p className="mt-3 mb-8 text-sm opacity-70">
-          নিজের নাম পরিবর্তন করো এবং অ্যাকাউন্টের তথ্য হালনাগাদ রাখো।
+        <p className="mb-7 text-sm leading-7 text-[#758176]">
+          আপনার নাম হালনাগাদ রাখুন। পরিবর্তন সংরক্ষণ করতে নিচের ফর্ম ব্যবহার করুন।
         </p>
 
         <ProfileForm
           initialName={session.user.name ?? ""}
-          email={session.user.email}
+          email={session.user.email ?? ""}
         />
       </div>
     </main>
