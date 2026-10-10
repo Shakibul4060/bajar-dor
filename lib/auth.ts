@@ -3,37 +3,39 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import clientPromise from "@/lib/mongodb";
 
-const client = await clientPromise;
-const db = client.db();
+const auth = async () => {
+  const client = await clientPromise;
+  const db = client.db("better-auth");
 
-export const auth = betterAuth({
-  database: mongodbAdapter(db, {
-    client,
-  }),
+  return betterAuth({
+    database: mongodbAdapter(db, {
+      client,
+    }),
 
-  emailAndPassword: {
-    enabled: true,
-    autoSignIn: true,
-  },
-
-  socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    emailAndPassword: {
+      enabled: true,
+      autoSignIn: true,
     },
 
-    ...(process.env.GOOGLE_CLIENT_ID &&
-    process.env.GOOGLE_CLIENT_SECRET
-      ? {
-          google: {
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          },
-        }
-      : {}),
-  },
+    socialProviders: {
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      },
 
-  trustedOrigins: [
-    "http://localhost:3000",
-  ],
-});
+      ...(process.env.GOOGLE_CLIENT_ID &&
+      process.env.GOOGLE_CLIENT_SECRET
+        ? {
+            google: {
+              clientId: process.env.GOOGLE_CLIENT_ID,
+              clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            },
+          }
+        : {}),
+    },
+
+    trustedOrigins: ["http://localhost:3000"],
+  });
+};
+
+export { auth };

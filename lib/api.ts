@@ -1,8 +1,9 @@
+
 import { Category, MarketPrice, Product } from "./types";
 
 const PRIMARY_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://api.api-store.workers.dev/api/bazardor";
+  "https://openapi.programming-hero.com/api/bazardor";
 
 const FALLBACK_URL =
   "https://api.abcz.workers.dev/api/bazardor";
@@ -18,16 +19,12 @@ async function getJson<T>(endpoint: string): Promise<T> {
       });
 
       if (response.status === 429) {
-        lastError = new Error(
-          "API rate limit exceeded (429)"
-        );
+        lastError = new Error("API rate limit exceeded (429)");
         continue;
       }
 
       if (!response.ok) {
-        lastError = new Error(
-          `API request failed: ${response.status}`
-        );
+        lastError = new Error(`API request failed: ${response.status}`);
         continue;
       }
 
@@ -60,13 +57,10 @@ function numberValue(value: any, fallback = 0): number {
   }
 
   const number = Number(value);
-
   return Number.isFinite(number) ? number : fallback;
 }
 
-function getChangeType(
-  value: number
-): "up" | "down" | "flat" {
+function getChangeType(value: number): "up" | "down" | "flat" {
   if (value > 0) return "up";
   if (value < 0) return "down";
   return "flat";
@@ -79,14 +73,10 @@ function getProductEmoji(name: string): string {
   if (value.includes("ডাল")) return "🫘";
   if (value.includes("তেল")) return "🫙";
   if (value.includes("আলু")) return "🥔";
-  if (value.includes("পেঁয়াজ") || value.includes("পেয়াজ")) {
-    return "🧅";
-  }
+  if (value.includes("পেঁয়াজ") || value.includes("পেয়াজ")) return "🧅";
   if (value.includes("মরিচ")) return "🌶️";
   if (value.includes("মাছ")) return "🐟";
-  if (value.includes("মুরগি") || value.includes("মাংস")) {
-    return "🍗";
-  }
+  if (value.includes("মুরগি") || value.includes("মাংস")) return "🍗";
   if (value.includes("ডিম")) return "🥚";
   if (value.includes("দুধ")) return "🥛";
   if (value.includes("আদা")) return "🫚";
@@ -97,15 +87,11 @@ function getProductEmoji(name: string): string {
 
 function normalizeMarket(market: any): MarketPrice {
   const minPrice = numberValue(
-    market?.minPrice ??
-      market?.minimumPrice ??
-      market?.min
+    market?.minPrice ?? market?.minimumPrice ?? market?.min
   );
 
   const maxPrice = numberValue(
-    market?.maxPrice ??
-      market?.maximumPrice ??
-      market?.max,
+    market?.maxPrice ?? market?.maximumPrice ?? market?.max,
     minPrice
   );
 
@@ -138,8 +124,7 @@ function normalizeMarket(market: any): MarketPrice {
 
 function normalizeProduct(item: any): Product {
   const changeData =
-    typeof item?.change === "object" &&
-    item.change !== null
+    typeof item?.change === "object" && item.change !== null
       ? item.change
       : {};
 
@@ -190,9 +175,7 @@ function normalizeProduct(item: any): Product {
 
   const categorySlug =
     typeof item?.category === "object"
-      ? item.category?.slug ??
-        item.category?.id ??
-        "other"
+      ? item.category?.slug ?? item.category?.id ?? "other"
       : item?.categorySlug ??
         item?.category_slug ??
         item?.category ??
@@ -204,17 +187,13 @@ function normalizeProduct(item: any): Product {
     (typeof item?.category === "object"
       ? item.category?.nameBn ?? item.category?.name
       : undefined) ??
-    item?.category ??
+    (typeof item?.category === "string" ? item.category : undefined) ??
     "অন্যান্য";
 
   return {
-    id: String(
-      item?.id ?? item?._id ?? item?.slug ?? name
-    ),
+    id: String(item?.id ?? item?._id ?? item?.slug ?? name),
 
-    slug: String(
-      item?.slug ?? item?.id ?? item?._id ?? name
-    ),
+    slug: String(item?.slug ?? item?.id ?? item?._id ?? name),
 
     name: String(name),
 
@@ -248,9 +227,7 @@ function normalizeProduct(item: any): Product {
     ),
 
     averagePrice: numberValue(
-      item?.averagePrice ??
-        item?.avgPrice ??
-        item?.today,
+      item?.averagePrice ?? item?.avgPrice ?? item?.today,
       price
     ),
 
@@ -267,30 +244,66 @@ function normalizeProduct(item: any): Product {
   };
 }
 
-export async function getProducts(category?: string) {
+export async function getProducts(category?: string): Promise<Product[]> {
   const query = category
     ? `?category=${encodeURIComponent(category)}`
     : "";
 
-  const payload = await getJson<any>(
-    `/products${query}`
-  );
+  const payload = await getJson<any>(`/products${query}`);
 
   return extractArray(payload).map(normalizeProduct);
 }
 
-export async function getProduct(slug: string) {
-  const payload = await getJson<any>(
-    `/products/${encodeURIComponent(slug)}`
-  );
+export async function getProduct(
+  slug: string
+): Promise<Product | undefined> {
+  const productKey = decodeURIComponent(slug).trim();
 
-  const item =
-    payload?.data?.product ??
-    payload?.data ??
-    payload?.product ??
-    payload;
+  // প্রথমে সরাসরি ID/slug দিয়ে পণ্য খোঁজা
+  try {
+    const payload = await getJson<any>(
+      `/products/${encodeURIComponent(productKey)}`
+    );
 
-  return normalizeProduct(item);
+    const item =
+      payload?.data?.product ??
+      payload?.data ??
+      payload?.product ??
+      payload;
+
+    if (
+      item &&
+      typeof item === "object" &&
+      !Array.isArray(item) &&
+      (
+        item.id != null ||
+        item._id != null ||
+        item.slug != null ||
+        item.name != null ||
+        item.nameBn != null ||
+        item.title != null
+      )
+    ) {
+      return normalizeProduct(item);
+    }
+  } catch {
+    // সরাসরি API ব্যর্থ হলে নিচে তালিকা থেকে খুঁজবে
+  }
+
+  // API-এর তালিকা থেকে ID, slug বা নাম দিয়ে খোঁজা
+  try {
+    const products = await getProducts();
+
+    return products.find(
+      (product) =>
+        product.id === productKey ||
+        product.slug === productKey ||
+        product.name === productKey
+    );
+  } catch (error) {
+    console.error("Unable to find product:", error);
+    return undefined;
+  }
 }
 
 export async function getCategories(): Promise<Category[]> {
