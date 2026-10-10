@@ -3,12 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Menu,
-  X,
-  User,
-  LogOut,
-} from "lucide-react";
+import { Menu, X, User, LogOut, ShoppingBasket } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
@@ -20,16 +15,19 @@ const categories = [
   { name: "তেল", slug: "tel" },
   { name: "সবজি", slug: "sobji" },
   { name: "মাছ", slug: "mach" },
-  { name: "মাংস", slug: "mangsho"},
+  { name: "মাংস", slug: "mangsho" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   const { data: session, isPending } = authClient.useSession();
+
+  const closeMobileMenu = () => setMobileOpen(false);
 
   const handleLogout = async () => {
     if (loggingOut) return;
@@ -40,17 +38,17 @@ export default function Navbar() {
       const { error } = await authClient.signOut();
 
       if (error) {
-        toast.error(error.message || "লগআউট করা যায়নি");
+        toast.error(error.message || "লগআউট করা যায়নি");
         return;
       }
 
-      toast.success("সফলভাবে লগআউট হয়েছে");
-      setMobileOpen(false);
+      toast.success("সফলভাবে লগআউট হয়েছে");
+      closeMobileMenu();
       router.replace("/");
       router.refresh();
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("লগআউট করার সময় সমস্যা হয়েছে");
+      toast.error("লগআউট করার সময় সমস্যা হয়েছে");
     } finally {
       setLoggingOut(false);
     }
@@ -68,7 +66,7 @@ export default function Navbar() {
     <div className="flex items-center gap-2">
       <Link
         href="/signin"
-        onClick={() => setMobileOpen(false)}
+        onClick={closeMobileMenu}
         className="rounded-xl px-4 py-2 text-sm font-bold text-[#374037] transition hover:bg-[#f1f6f1]"
       >
         সাইন ইন
@@ -76,7 +74,7 @@ export default function Navbar() {
 
       <Link
         href="/signup"
-        onClick={() => setMobileOpen(false)}
+        onClick={closeMobileMenu}
         className="rounded-xl bg-[#168a45] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#0f7138]"
       >
         সাইন আপ
@@ -88,12 +86,14 @@ export default function Navbar() {
     <>
       <Link
         href="/profile"
-        onClick={() => setMobileOpen(false)}
+        onClick={closeMobileMenu}
         className="flex max-w-full items-center gap-2 truncate rounded-xl border border-[#dfe7df] bg-white px-3 py-2 text-sm font-bold text-[#263026] transition hover:bg-[#f5faf6]"
       >
         <User size={17} className="shrink-0 text-[#168a45]" />
-        <span className="max-w-37.5 truncate">
-          {session?.user?.name || session?.user?.email || "প্রোফাইল"}
+        <span className="max-w-[150px] truncate">
+          {session?.user?.name ||
+            session?.user?.email ||
+            "প্রোফাইল"}
         </span>
       </Link>
 
@@ -101,7 +101,7 @@ export default function Navbar() {
         type="button"
         onClick={handleLogout}
         disabled={loggingOut}
-        className="flex items-center gap-2 rounded-xl bg-[#fff1f1] px-3 py-2 text-sm font-bold text-[#dc4d4d] transition hover:bg-[#ffe4e4] disabled:opacity-60"
+        className="flex items-center justify-center gap-2 rounded-xl bg-[#fff1f1] px-3 py-2 text-sm font-bold text-[#dc4d4d] transition hover:bg-[#ffe4e4] disabled:opacity-60"
       >
         <LogOut size={17} />
         {loggingOut ? "লগআউট হচ্ছে..." : "লগআউট"}
@@ -115,11 +115,11 @@ export default function Navbar() {
         <div className="flex min-h-[76px] items-center justify-between gap-4">
           <Link
             href="/"
-            onClick={() => setMobileOpen(false)}
+            onClick={closeMobileMenu}
             className="flex shrink-0 items-center gap-2"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e9f7ee] text-xl">
-              🛒
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e9f7ee] text-[#168a45]">
+              <ShoppingBasket size={24} />
             </div>
 
             <div>
@@ -133,7 +133,15 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden items-center gap-2 md:flex">
-            {isPending ? authLinks : session?.user ? userLinks : authLinks}
+            {isPending ? (
+              <span className="text-sm text-gray-500">
+                অপেক্ষা করুন...
+              </span>
+            ) : session?.user ? (
+              userLinks
+            ) : (
+              authLinks
+            )}
           </div>
 
           <button
@@ -142,6 +150,7 @@ export default function Navbar() {
             onClick={() => setMobileOpen((open) => !open)}
             aria-label={mobileOpen ? "মেনু বন্ধ করুন" : "মেনু খুলুন"}
             aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
@@ -153,8 +162,15 @@ export default function Navbar() {
         >
           {categories.map((category) => (
             <Link
-              key={category.name}
-              href={category.slug ? `/category/${category.slug}` : "/"}
+              key={category.slug || "all"}
+              href={
+                category.slug
+                  ? `/category/${category.slug}`
+                  : "/"
+              }
+              aria-current={
+                isCategoryActive(category.slug) ? "page" : undefined
+              }
               className={`shrink-0 rounded-lg px-3 py-2 text-sm font-bold transition ${
                 isCategoryActive(category.slug)
                   ? "bg-[#e8f7ed] text-[#168a45]"
@@ -167,13 +183,26 @@ export default function Navbar() {
         </nav>
 
         {mobileOpen && (
-          <div className="border-t border-[#edf1ed] py-4 md:hidden">
-            <div className="grid grid-cols-2 gap-2">
+          <div
+            id="mobile-navigation"
+            className="border-t border-[#edf1ed] py-4 md:hidden"
+          >
+            <nav
+              aria-label="মোবাইল পণ্যের ক্যাটাগরি"
+              className="grid grid-cols-2 gap-2"
+            >
               {categories.map((category) => (
                 <Link
-                  key={category.name}
-                  href={category.slug ? `/category/${category.slug}` : "/"}
-                  onClick={() => setMobileOpen(false)}
+                  key={category.slug || "all"}
+                  href={
+                    category.slug
+                      ? `/category/${category.slug}`
+                      : "/"
+                  }
+                  onClick={closeMobileMenu}
+                  aria-current={
+                    isCategoryActive(category.slug) ? "page" : undefined
+                  }
                   className={`rounded-xl px-4 py-3 text-sm font-bold ${
                     isCategoryActive(category.slug)
                       ? "bg-[#e8f7ed] text-[#168a45]"
@@ -183,25 +212,30 @@ export default function Navbar() {
                   {category.name}
                 </Link>
               ))}
-            </div>
+            </nav>
 
             <div className="mt-4 border-t border-[#edf1ed] pt-4">
               {isPending ? (
-                <div className="flex justify-center">{authLinks}</div>
+                <p className="text-center text-sm text-gray-500">
+                  অপেক্ষা করুন...
+                </p>
               ) : session?.user ? (
-                <div className="flex flex-col gap-2">{userLinks}</div>
+                <div className="flex flex-col gap-2">
+                  {userLinks}
+                </div>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     href="/signin"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={closeMobileMenu}
                     className="rounded-xl border border-[#dfe7df] px-4 py-3 text-center text-sm font-bold text-[#374037]"
                   >
                     সাইন ইন
                   </Link>
+
                   <Link
                     href="/signup"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={closeMobileMenu}
                     className="rounded-xl bg-[#168a45] px-4 py-3 text-center text-sm font-bold text-white"
                   >
                     সাইন আপ
