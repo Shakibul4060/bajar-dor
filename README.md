@@ -77,6 +77,28 @@ bajar-dor/
 └── README.md
 ```
 
+## Netlify Deployment
+
+This repository is a Next.js application, not a plain static HTML site. The
+root `netlify.toml` configures `npm run build` as the build command and `.next`
+as the publish directory. Netlify handles the Next.js runtime automatically.
+Do not use an empty build command or publish the repository root: the application
+requires compilation and server-side routing.
+
+The committed `package-lock.json` pins the dependency tree for reproducible
+installs. Configure the application's required environment variables in Netlify
+before deploying.
+
+Authentication requires `MONGODB_URI` in the Netlify runtime environment.
+Database validation and connections occur only when authentication is requested,
+not when modules are imported during a build. Both profile pages render per
+request rather than being prerendered. Missing runtime database configuration
+still causes authentication requests to fail; it is not replaced with dummy data.
+
+If a deployment stops during dependency installation, inspect the complete
+deploy log for the first error. A log ending at "Installing dependencies" does
+not identify the cause of a failure.
+
 ## 📌 Project Status
 
 This project is being developed as part of a web development assignment.

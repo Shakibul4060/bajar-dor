@@ -5,8 +5,11 @@ import { Settings2 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import ProfileForm from "@/components/profileform";
 
+export const dynamic = "force-dynamic";
+
 export default async function UpdateProfilePage() {
-  const session = await auth.api.getSession({
+  const authInstance = await auth();
+  const session = await authInstance.api.getSession({
     headers: await headers(),
   });
 
