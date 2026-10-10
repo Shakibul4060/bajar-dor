@@ -1,4 +1,3 @@
-import Navbar from "@/components/navbar";
 import PriceTicker from "@/components/priceticker";
 import Hero from "@/components/hero";
 import ProductSection from "@/components/productsection";
@@ -35,7 +34,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Navbar />
+      
 
       <PriceTicker products={products} />
 

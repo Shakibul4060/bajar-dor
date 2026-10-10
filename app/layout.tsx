@@ -1,11 +1,12 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/providers";
+import Navbar from "@/components/navbar";
 
 export const metadata: Metadata = {
   title: "বাজার দর | BazarDor",
-  description:
-    "প্রয়োজনীয় পণ্যের আজকের বাজারদর এক নজরে দেখুন।",
+  description: "প্রয়োজনীয় পণ্যের আজকের বাজারদর এক নজরে দেখুন।",
 };
 
 export default function RootLayout({
@@ -16,7 +17,10 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
