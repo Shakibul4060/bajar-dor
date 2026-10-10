@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f8f4;
+  --foreground: #182018;
+  --primary: #168a45;
+  --primary-dark: #0f6b34;
+  --soft-green: #e9f7ee;
+  --border: #dfe8df;
+  --muted: #6f786f;
+  --danger: #e94b4b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.container-main {
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+.section-padding {
+  padding-block: 64px;
+}
+
+.card-shadow {
+  box-shadow: 0 8px 30px rgba(22, 35, 22, 0.07);
+}
+
+.green-gradient {
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(54, 190, 105, 0.2),
+      transparent 28%
+    ),
+    linear-gradient(135deg, #f4fff7 0%, #e7f8ed 100%);
+}
+
+.ticker-wrapper {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker-track {
+  display: inline-flex;
+  min-width: max-content;
+  animation: ticker 28s linear infinite;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #edf1ed 25%,
+    #f8faf8 50%,
+    #edf1ed 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .container-main {
+    width: min(100% - 24px, 1120px);
+  }
+
+  .section-padding {
+    padding-block: 42px;
+  }
+}
