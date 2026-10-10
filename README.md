@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 Bazar Dor — বাজার দর
 
-## Getting Started
+Bazar Dor is a Next.js web application designed to help users explore products, browse categories, and compare prices through a simple, user-friendly interface.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Responsive homepage and navigation
+- Product listing and product details pages
+- Product categories and sorting options
+- Price comparison interface
+- User authentication pages
+- User profile and profile update interface
+- Bengali-language user interface
+
+## 🧰 Technologies Used
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- DaisyUI
+- Better Auth
+- Lucide React
+- React Hot Toast
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Shakibul4060/bajar-dor.git
+   ```
+
+2. Open the project directory:
+
+   ```bash
+   cd bajar-dor
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Configure the required environment variables and authentication/database services according to your project setup.
+
+5. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📁 Main Project Structure
+
+```text
+bajar-dor/
+├── app/
+│   ├── product/
+│   ├── profile/
+│   ├── signin/
+│   ├── signup/
+│   └── page.tsx
+├── components/
+├── lib/
+├── public/
+├── package.json
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📌 Project Status
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project is being developed as part of a web development assignment.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 👨‍💻 Author
 
-## Learn More
+**Shakibul**
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+GitHub: [Shakibul4060](https://github.com/Shakibul4060)
