@@ -8,11 +8,9 @@ import ProfileForm from "@/components/profileform";
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {
-  const authInstance = await auth();
-  const session = await authInstance.api.getSession({
-    headers: await headers(),
-  });
-
+const session = await auth.api.getSession({
+  headers: await headers(),
+});
   if (!session?.user) {
     redirect("/signin?callbackURL=%2Fprofile");
   }

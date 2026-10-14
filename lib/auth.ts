@@ -1,3 +1,4 @@
+
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
@@ -13,7 +14,6 @@ export const auth = betterAuth({
   },
 
   trustedOrigins: [
-    "http://localhost:3000",
-    "https://bajar-dor.netlify.app",
+    "http://localhost:3000"
   ],
 });
