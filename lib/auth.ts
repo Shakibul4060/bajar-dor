@@ -1,41 +1,19 @@
-
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import getMongoClient from "@/lib/mongodb";
+import { MongoClient } from "mongodb";
 
-const auth = async () => {
-  const client = await getMongoClient();
-  const db = client.db("better-auth");
+if (!process.env.MONGODB_URI) {
+  throw new Error("Please add MONGODB_URI to your .env.local file");
+}
 
-  return betterAuth({
-    database: mongodbAdapter(db, {
-      client,
-    }),
+const client = new MongoClient(process.env.MONGODB_URI);
+const db = client.db("bazar-dor"); // আপনার ডাটাবেজের নাম দিতে পারেন
 
-    emailAndPassword: {
-      enabled: true,
-      autoSignIn: true,
-    },
-
-    socialProviders: {
-      github: {
-        clientId: process.env.GITHUB_CLIENT_ID!,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      },
-
-      ...(process.env.GOOGLE_CLIENT_ID &&
-      process.env.GOOGLE_CLIENT_SECRET
-        ? {
-            google: {
-              clientId: process.env.GOOGLE_CLIENT_ID,
-              clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            },
-          }
-        : {}),
-    },
-
-    trustedOrigins: ["http://localhost:3000"],
-  });
-};
-
-export { auth };
+export const auth = betterAuth({
+  database: mongodbAdapter(db),
+  emailAndPassword: {
+    enabled: true,
+    
+  },
+  trustedOrigins: ["http://localhost:3000"],
+});

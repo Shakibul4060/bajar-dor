@@ -7,6 +7,7 @@ import { Mail, Lock, User, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
+
 export default function SignupPage() {
   const router = useRouter();
 
